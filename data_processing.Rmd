@@ -1,5 +1,5 @@
 ---
-title: "data_processing"
+title: "Almond Model Implementation "
 output: html_document
 ---
 
@@ -18,7 +18,7 @@ clim <- read.table(here("data","clim.txt"),header = TRUE) # read in climate data
 
 
 # TEMPERATURE
-Tn2 <- clim %>% 
+feb_tmin <- clim %>% 
   
   # filter to month of interest
   filter(month == 2) %>%
@@ -27,12 +27,12 @@ Tn2 <- clim %>%
   group_by(year) %>% 
   
    # calculate mean temp in february by year, and set column name to match function parameter
-  summarize(Tn2 = mean(tmin_c, na.rm = TRUE),
+  summarize(feb_tmin = mean(tmin_c, na.rm = TRUE),
     .groups = "drop") 
 
 
 # PRECIPITATION
-P1 <- clim %>%
+jan_precip <- clim %>%
   
   # filter to month of interest
   filter(month == 1) %>%  
@@ -41,19 +41,17 @@ P1 <- clim %>%
   group_by(year) %>%
   
   
-   # calculate mean precip in january by year, and set column name to match function parameter
+   # calculate sum of precip in january by year, and set column name to match function parameter
   summarize(
-    P1 = sum(precip, na.rm = TRUE),
+    jan_precip = sum(precip, na.rm = TRUE),
     .groups = "drop")
 
-
-# merge together to create the time series to be used with the function 
-clean_clim <- merge(jan_precip, feb_tmin)
-  
 ```
 
 ```{r}
-almond_yield_model(Tn2$Tn2, P1$P1)
+# APPLY FUNCTION using prepared data 
+
+almond_model(feb_tmin$feb_tmin, jan_precip$jan_precip)
 
 ```
 
