@@ -1,0 +1,60 @@
+---
+title: "data_processing"
+output: html_document
+---
+
+```{r}
+library(dplyr) # load libraries
+library(here)
+```
+
+```{r}
+clim <- read.table(here("data","clim.txt"),header = TRUE) # read in climate data 
+```
+
+
+```{r}
+# model uses climate data from a particular month, must transform data by summarizing daily data into monthly data
+
+
+# TEMPERATURE
+Tn2 <- clim %>% 
+  
+  # filter to month of interest
+  filter(month == 2) %>%
+  
+  # group by year
+  group_by(year) %>% 
+  
+   # calculate mean temp in february by year, and set column name to match function parameter
+  summarize(Tn2 = mean(tmin_c, na.rm = TRUE),
+    .groups = "drop") 
+
+
+# PRECIPITATION
+P1 <- clim %>%
+  
+  # filter to month of interest
+  filter(month == 1) %>%  
+
+  # group by year 
+  group_by(year) %>%
+  
+  
+   # calculate mean precip in january by year, and set column name to match function parameter
+  summarize(
+    P1 = sum(precip, na.rm = TRUE),
+    .groups = "drop")
+
+
+# merge together to create the time series to be used with the function 
+clean_clim <- merge(jan_precip, feb_tmin)
+  
+```
+
+```{r}
+almond_yield_model(Tn2$Tn2, P1$P1)
+
+```
+
+
