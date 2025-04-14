@@ -4,7 +4,7 @@ output: html_document
 author: Kaiju Morquecho
 ---
 
-```{r}
+```{r message=FALSE}
 library(dplyr) # load libraries
 library(here)
 ```
@@ -57,6 +57,8 @@ jan_precip <- clim %>%
 
 ```{r}
 # APPLY FUNCTION using prepared data 
+
+source("almond_yield.R")
 
 almond_model(feb_tmin$feb_tmin, jan_precip$jan_precip)
 
