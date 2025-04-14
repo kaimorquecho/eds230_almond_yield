@@ -1,7 +1,9 @@
 ---
 title: "Almond Model Implementation "
-output: html_document
 date: "2025-04-14"
+output:
+  html_document:
+    theme: cerulean
 author: Kaiju Morquecho
 ---
 
