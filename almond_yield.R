@@ -1,12 +1,12 @@
 
 #' Almond Yield Anomaly Model
 #' models almond yield anomaly response to climate using time series data
-#' @param feb_tmin is February's minimum temperature in C°
-#' @param jan_precip is total precipitation in January in mm
+#' @param feb_tmin is a vector of February's minimum temperature in C°
+#' @param jan_precip is a vector of total precipitation in January in mm
 #'
 #' @returns a list of the minimum, maximum, and mean almond yield anomaly results in ton/acre
 #' @author Kaiju Morquecho
-#' 
+#' @source almond transfer function adopted from Lobell et al. 2006
 
 almond_model <- function(feb_tmin, jan_precip) {
  

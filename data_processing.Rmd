@@ -1,11 +1,18 @@
 ---
 title: "Almond Model Implementation "
 output: html_document
+author: Kaiju Morquecho
 ---
 
 ```{r}
 library(dplyr) # load libraries
 library(here)
+```
+
+```{r}
+# model diagram
+knitr::include_graphics(here("almond_model_diagram.jpg"))
+
 ```
 
 ```{r}
