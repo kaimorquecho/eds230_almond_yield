@@ -1,13 +1,18 @@
 ---
 title: "Almond Model Implementation "
 output: html_document
+date: "2025-04-14"
 author: Kaiju Morquecho
 ---
 
+### Load libraries
+
 ```{r message=FALSE}
-library(dplyr) # load libraries
+library(dplyr) 
 library(here)
 ```
+
+### Create model diagram
 
 ```{r}
 # model diagram
@@ -15,10 +20,13 @@ knitr::include_graphics(here("almond_model_diagram.jpg"))
 
 ```
 
+### Read in data
+
 ```{r}
 clim <- read.table(here("data","clim.txt"),header = TRUE) # read in climate data 
 ```
 
+### Prepare variables to use for function implementation
 
 ```{r}
 # model uses climate data from a particular month, must transform data by summarizing daily data into monthly data
@@ -54,6 +62,8 @@ jan_precip <- clim %>%
     .groups = "drop")
 
 ```
+
+### Implement the function
 
 ```{r}
 # APPLY FUNCTION using prepared data 
