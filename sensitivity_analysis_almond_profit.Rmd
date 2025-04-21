@@ -1,0 +1,18 @@
+---
+title: "sensitivity_analysis_almond_profit"
+output: html_document
+---
+
+
+```{r message=FALSE}
+library(here)
+library(tidyverse)
+```
+
+```{r}
+source(here("almond_anomaly.R"))
+
+almond_anomaly(300, 500)
+
+```
+

@@ -63,6 +63,12 @@ jan_precip <- clim %>%
     jan_precip = sum(precip, na.rm = TRUE),
     .groups = "drop")
 
+# bring together to have one df to pass into function 
+
+clim <- left_join(feb_tmin, jan_precip, by = "year")
+
+
+ 
 ```
 
 ### Implement the function
@@ -70,9 +76,11 @@ jan_precip <- clim %>%
 ```{r}
 # APPLY FUNCTION using prepared data 
 
-source("almond_yield.R")
+source(here("almond_anomaly.R"))
 
-almond_model(feb_tmin$feb_tmin, jan_precip$jan_precip)
+anomaly_results <- almond_anomaly(clim$feb_tmin, clim$jan_precip)
+
+
 
 ```
 
