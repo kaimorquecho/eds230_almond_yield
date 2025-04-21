@@ -4,7 +4,7 @@
 #' @param feb_tmin is a vector of February's minimum temperature in C°
 #' @param jan_precip is a vector of total precipitation in January in mm
 #'
-#' @returns a list of the minimum, maximum, and mean almond yield anomaly results in ton/acre
+#' @returns a df of almond yield anomaly results in ton/acre
 #' @author Kaiju Morquecho
 #' @source almond transfer function adopted from Lobell et al. 2006
 

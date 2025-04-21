@@ -15,3 +15,4 @@ almond_profit <- function(yield_anomaly, base_yield = 1.0, price = 6000) {
   return(profit)
   
 }
+

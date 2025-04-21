@@ -78,9 +78,7 @@ clim <- left_join(feb_tmin, jan_precip, by = "year")
 
 source(here("almond_anomaly.R"))
 
-anomaly_results <- almond_anomaly(clim$feb_tmin, clim$jan_precip)
-
-
+results <- almond_anomaly(clim$feb_tmin, clim$jan_precip)
 
 ```
 

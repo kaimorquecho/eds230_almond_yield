@@ -10,9 +10,8 @@ library(tidyverse)
 ```
 
 ```{r}
-source(here("almond_anomaly.R"))
+source(here("almond_profit_model.R"))
 
-almond_anomaly(300, 500)
-
+clim <- almond_profit_model(clim, base_yield = 1.0, price = 4000)
 ```
 
