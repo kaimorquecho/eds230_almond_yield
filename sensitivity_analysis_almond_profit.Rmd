@@ -1,17 +1,77 @@
 ---
-title: "sensitivity_analysis_almond_profit"
-output: html_document
+title: "Sensitivity Analysis"
+subtitle: "Assigment #3 Profit with Almond Yield"
+date: "2025-04-21"
+output:
+  html_document:
+    theme: cerulean
+author: Kaiju Morquecho
 ---
 
 
+### Load libraries
 ```{r message=FALSE}
 library(here)
 library(tidyverse)
 ```
 
+### Read data
+```{r}
+clim <- read.table(here("data","clim.txt"),header = TRUE) # read in climate data 
+```
+
+### Prepare data
+```{r}
+# model uses climate data from a particular month, must transform data by summarizing daily data into monthly data
+
+
+# TEMPERATURE
+feb_tmin <- clim %>% 
+  
+  # filter to month of interest
+  filter(month == 2) %>%
+  
+  # group by year
+  group_by(year) %>% 
+  
+   # calculate mean temp in february by year, and set column name to match function parameter
+  summarize(feb_tmin = mean(tmin_c, na.rm = TRUE),
+    .groups = "drop") 
+
+
+# PRECIPITATION
+jan_precip <- clim %>%
+  
+  # filter to month of interest
+  filter(month == 1) %>%  
+
+  # group by year 
+  group_by(year) %>%
+  
+  
+   # calculate sum of precip in january by year, and set column name to match function parameter
+  summarize(
+    jan_precip = sum(precip, na.rm = TRUE),
+    .groups = "drop")
+
+# bring together to have one df to pass into function 
+
+clim <- left_join(feb_tmin, jan_precip, by = "year")
+
+
+ 
+```
+
+### Source functions and test new profit and wrapper functions 
 ```{r}
 source(here("almond_profit_model.R"))
 
+source(here("almond_anomaly.R"))
+
+source(here("almond_profit.R"))
+
 clim <- almond_profit_model(clim, base_yield = 1.0, price = 4000)
+
+glimpse(clim)
 ```
 
