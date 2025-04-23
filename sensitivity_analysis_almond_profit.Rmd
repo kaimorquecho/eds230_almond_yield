@@ -13,6 +13,7 @@ author: Kaiju Morquecho
 ```{r message=FALSE}
 library(here)
 library(tidyverse)
+library(ggpubr)
 ```
 
 ### Read data
@@ -75,3 +76,99 @@ clim <- almond_profit_model(clim, base_yield = 1.0, price = 4000)
 glimpse(clim)
 ```
 
+### Run sensitivity analysis varying two parameters
+```{r}
+# source functions (if haven't already)
+source(here("almond_profit_model.R"))
+
+source(here("almond_anomaly.R"))
+
+source(here("almond_profit.R"))
+
+
+# sample size 
+reps_per_year <- 10
+years <- clim$year
+n <- length(years) * reps_per_year # to make plotting nicer 
+
+# simulate parameter uncertainty for feb_tmin, jan_precip and base_yield
+set.seed(40)
+
+sensitivity_analysis_df <- tibble(
+  feb_tmin = rnorm(n, mean = 7, sd = 1),
+  jan_precip = runif(n, min = 30, max = 600),
+  base_yield = rnorm(n, mean = 1.1, sd = 0.1)
+)
+
+# apply almond_profit_model using pmap
+sensitivity_outputs <- sensitivity_analysis_df %>%
+  pmap_dfr(function(feb_tmin, jan_precip, base_yield) {
+    inputs <- tibble(feb_tmin=feb_tmin, jan_precip=jan_precip)
+    almond_profit_model(inputs, base_yield = base_yield)
+    
+    
+  })
+
+```
+
+### Create plots
+```{r}
+# sensitivity_outputs$year <- sample(clim$year, size = nrow(sensitivity_outputs), replace = TRUE)
+
+# changed year col to have more reps so boxplot would be clear and easy to understand patterns  
+sensitivity_outputs$year <- rep(clim$year, each = reps_per_year)
+
+
+# yield anomaly by year 
+ggplot(sensitivity_outputs, aes(x = as.factor(year), y = yield_anomaly, group = year)) +
+  geom_boxplot(fill = "lightblue") +
+  labs(
+    title = "Yield Anomaly by Year (with Parameter Uncertainty)",
+    x = "Year",
+    y = "Yield Anomaly (tons/acre)"
+  ) +
+  theme_minimal()
+
+ggplot(sensitivity_outputs, aes(x = yield_anomaly, y = profit, color = jan_precip)) +
+  geom_point(alpha = 0.7, size = 3) +
+  scale_color_viridis_c(option = "C", name = "Jan Precip (mm)") +
+  labs(
+    title = "Yield Anomaly vs Profit (Colored by January Precipitation)",
+    x = "Yield Anomaly (tons/acre)",
+    y = "Profit (USD/acre)"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+p1 <- ggplot(sensitivity_outputs, aes(jan_precip, yield_anomaly)) +
+  geom_point(alpha = 0.6, color = "springgreen3") +
+  labs(x = "January Precip (mm)", y = "Yield Anomaly")
+
+p2 <- ggplot(sensitivity_outputs, aes(feb_tmin, yield_anomaly)) +
+  geom_point(alpha = 0.6, color = "indianred2") +
+  labs(x = "Feb Tmin (°C)", y = NULL)
+
+
+p3 <- ggplot(sensitivity_outputs, aes(jan_precip, profit)) +
+  geom_point(alpha = 0.6, color = "gold2") +
+  scale_y_continuous(
+    breaks = scales::pretty_breaks(n = 10),  # aim for ~10 breaks
+    labels = scales::dollar_format(prefix = "$", accuracy = 1)
+  ) +
+  labs(
+    title = "Profit vs January Precipitation",
+    x = "January Precipitation (mm)",
+    y = "Profit per Acre (USD)"
+  ) +
+  theme_minimal()
+
+
+ggarrange(p1, p2 , ncol = 2)
+
+p3
+```
+
+
+The almond yield anomaly and profit model highlights the effect of climate variables, primarily that of precipitation , on yield outcomes almonds. There is a strong nonlinear relationship between january precipitation and the yield anomalies seen, where yield rapidly increases as precipitation rises. Temperature shows a more scattered relationship with yield anomaly, its effect is less pronounced and perhaps more complex than the model can account for. The sensitivity analysis, in summary, shows the benefits of modeling parameter uncertainty, not just as a way of testing functions and models' effectiveness and fit, but also as a way to understand the system or process that we are modeling.
